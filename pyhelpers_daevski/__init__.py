@@ -6,6 +6,15 @@ from typing import Any
 
 import yaml
 
+from pyhelpers_daevski.security import (
+    application_password_prompt,
+    application_password_prompt_new,
+    get_local_pw_hash,
+    key_from_password,
+)
+
+__version__ = '0.2.0'
+
 
 def get_configuration(config_file: Path):
     with config_file.open() as f:
@@ -35,3 +44,14 @@ def get_logger(
     )
     logging.info('APP STARTUP')
     return logging
+
+
+def authenticate_user(pw_hash_file: Path) -> bytes:
+    if pw_hash_file.exists():
+        pw_hash = get_local_pw_hash(pw_hash_file)
+    else:
+        pw_hash = application_password_prompt_new(pw_hash_file)
+
+    provided_password: str = application_password_prompt(pw_hash)
+    application_key: bytes = key_from_password(provided_password)
+    return application_key
