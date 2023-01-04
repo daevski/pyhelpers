@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyhelpers-daevski"
-version = "0.2.0"
+version = "0.2.1"
 description = "helper functions for personal use"
 authors = ["David Mckee <daevski@gmail.com>"]
 readme = "README.md"
@@ -10,6 +10,7 @@ packages = [{include = "pyhelpers_daevski"}]
 python = "^3.11"
 pyyaml = "^6.0"
 cryptography = "^39.0.0"
+pwinput = "^1.0.2"
 
 
 [tool.poetry.group.dev.dependencies]

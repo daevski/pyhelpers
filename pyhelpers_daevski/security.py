@@ -3,14 +3,13 @@ import binascii
 import hashlib
 import os
 import re
-from getpass import getpass
 from pathlib import Path
-from typing import Optional
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from pwinput import pwinput
 
 
 def key_from_password(password_provided: str) -> bytes:
@@ -125,15 +124,15 @@ def pwd_requirements_check(password):
 
 def application_password_prompt_new(pw_hash_file: Path) -> str:
     _prompt_text = (
-        f"A password is considered acceptable if it has: \n"
-        f"8 characters length or more\n"
-        f"1 digit or more\n"
-        f"1 uppercase letter or more\n"
-        f"1 lowercase letter or more.\n\n"
-        f"New application password: "
+        "A password is considered acceptable if it has: \n"
+        "8 characters length or more\n"
+        "1 digit or more\n"
+        "1 uppercase letter or more\n"
+        "1 lowercase letter or more.\n\n"
+        "New application password: "
     )
-    provided_password = getpass(_prompt_text)
-    confirmation_password = getpass("Enter it again to confirm: ")
+    provided_password = pwinput(prompt=_prompt_text, mask='*')
+    confirmation_password = pwinput(prompt="Enter it again to confirm: ", mask='*')
     if not provided_password == confirmation_password:
         exit("*Buzzer* Nope, no dice.")
     create_hash(provided_password, pw_hash_file)
@@ -148,7 +147,7 @@ def application_password_prompt(stored_password_hash: str) -> str:
 
     attempt = 1
     while attempt <= _password_attempts:
-        provided_password = getpass(_prompt_text)
+        provided_password = pwinput(prompt=_prompt_text, mask='*')
         if not verify_pwd_hash(stored_password_hash, provided_password):
             print(_incorrect_password_message)
             attempt += 1

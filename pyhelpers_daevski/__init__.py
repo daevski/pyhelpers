@@ -13,7 +13,7 @@ from pyhelpers_daevski.security import (
     key_from_password,
 )
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 
 def get_configuration(config_file: Path):
