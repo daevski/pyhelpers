@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "pyhelpers-daevski"
+version = "0.1.0"
+description = "helper functions for personal use"
+authors = ["David Mckee <daevski@gmail.com>"]
+readme = "README.md"
+packages = [{include = "pyhelpers_daevski"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyyaml = "^6.0"
+cryptography = "^39.0.0"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^0.991"
+flake8 = "^6.0.0"
+black = "^22.12.0"
+pylint = "^2.15.9"
+types-pyyaml = "^6.0.12.2"
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
