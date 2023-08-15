@@ -217,17 +217,17 @@ def test_pwd_requirements_check(ok_pass, bad_pass, error_dict):
 
 @patch('pyhelpers_daevski.security.print')
 @patch('pyhelpers_daevski.security.verify_pwd_hash')
-@patch('pyhelpers_daevski.security.getpass')
+@patch('pyhelpers_daevski.security.pwinput')
 class TestAppPassPrompt:
     def test_application_password_prompt_pass_correct_first_attempt(
-        self, m_getpass, m_verify_pwd_hash, m_print
+        self, m_pwinput, m_verify_pwd_hash, m_print
     ):
         # Setup
         pwhash = 'pwhash'
         provided_passes = ['pass1']
-        m_getpass.side_effect = (p for p in provided_passes)
+        m_pwinput.side_effect = (p for p in provided_passes)
         m_verify_pwd_hash.side_effect = (v for v in (True,))
-        expected_getpass_calls = 1
+        expected_pwinput_calls = 1
         expected_verify_pwd_calls = 1
         expected_print_calls = 0
 
@@ -235,21 +235,21 @@ class TestAppPassPrompt:
         result = application_password_prompt(pwhash)
 
         # Assert
-        assert m_getpass.call_count == expected_getpass_calls
+        assert m_pwinput.call_count == expected_pwinput_calls
         assert m_verify_pwd_hash.call_count == expected_verify_pwd_calls
         assert m_print.call_count == expected_print_calls
         assert result == provided_passes[0]
 
     def test_application_password_prompt_existing_pass_correct_second_attempt(
-        self, m_getpass, m_verify_pwd_hash, m_print
+        self, m_pwinput, m_verify_pwd_hash, m_print
     ):
 
         # Setup
         pwhash = 'pwhash'
         provided_passes = ['pass2', 'pass1']
-        m_getpass.side_effect = (p for p in provided_passes)
+        m_pwinput.side_effect = (p for p in provided_passes)
         m_verify_pwd_hash.side_effect = (v for v in (False, True))
-        expected_getpass_calls = 2
+        expected_pwinput_calls = 2
         expected_verify_pwd_calls = 2
         expected_print_calls = 1
 
@@ -257,20 +257,20 @@ class TestAppPassPrompt:
         result = application_password_prompt(pwhash)
 
         # Assert
-        assert m_getpass.call_count == expected_getpass_calls
+        assert m_pwinput.call_count == expected_pwinput_calls
         assert m_verify_pwd_hash.call_count == expected_verify_pwd_calls
         assert m_print.call_count == expected_print_calls
         assert result == provided_passes[-1]
 
     def test_application_password_prompt_existing_pass_correct_third_attempt(
-        self, m_getpass, m_verify_pwd_hash, m_print
+        self, m_pwinput, m_verify_pwd_hash, m_print
     ):
         # Setup
         pwhash = 'pwhash'
         provided_passes = ['pass2', 'pass2', 'pass1']
-        m_getpass.side_effect = (p for p in provided_passes)
+        m_pwinput.side_effect = (p for p in provided_passes)
         m_verify_pwd_hash.side_effect = (v for v in (False, False, True))
-        expected_getpass_calls = 3
+        expected_pwinput_calls = 3
         expected_verify_pwd_calls = 3
         expected_print_calls = 2
 
@@ -278,22 +278,22 @@ class TestAppPassPrompt:
         result = application_password_prompt(pwhash)
 
         # Assert
-        assert m_getpass.call_count == expected_getpass_calls
+        assert m_pwinput.call_count == expected_pwinput_calls
         assert m_verify_pwd_hash.call_count == expected_verify_pwd_calls
         assert m_print.call_count == expected_print_calls
         assert result == provided_passes[-1]
 
     def test_application_password_prompt_existing_pass_fail_max_attempts(
-        self, m_getpass, m_verify_pwd_hash, m_print
+        self, m_pwinput, m_verify_pwd_hash, m_print
     ):
 
         # Setup
         pwhash = 'pwhash'
         provided_passes = ['pass2', 'pass2', 'pass2']
-        m_getpass.side_effect = (p for p in provided_passes)
+        m_pwinput.side_effect = (p for p in provided_passes)
         m_verify_pwd_hash.side_effect = (v for v in [False, False, False])
         exceeded_attempts_exit_msg = "Could not login; " "Password is not correct."
-        expected_getpass_calls = 3
+        expected_pwinput_calls = 3
         expected_verify_pwd_calls = 3
         expected_print_calls = 3
 
@@ -302,7 +302,7 @@ class TestAppPassPrompt:
             application_password_prompt(pwhash)
 
         # Assert
-        assert m_getpass.call_count == expected_getpass_calls
+        assert m_pwinput.call_count == expected_pwinput_calls
         assert m_verify_pwd_hash.call_count == expected_verify_pwd_calls
         assert m_print.call_count == expected_print_calls
         assert str(exit_with_msg.value) == exceeded_attempts_exit_msg
@@ -312,33 +312,33 @@ class TestAppPassPrompt:
 
 
 @patch('pyhelpers_daevski.security.create_hash')
-@patch('pyhelpers_daevski.security.getpass')
+@patch('pyhelpers_daevski.security.pwinput')
 class TestAppPassNewPrompt:
     def test_application_password_prompt_new_password_confirm_success(
-        self, m_getpass, m_create_hash
+        self, m_pwinput, m_create_hash
     ):
         # Setup
         pwhash_filename = 'hashfile'
         provided_passes = ['pass1', 'pass1']
-        m_getpass.side_effect = (p for p in provided_passes)
-        expected_getpass_calls = 2
+        m_pwinput.side_effect = (p for p in provided_passes)
+        expected_pwinput_calls = 2
         expected_createhash_calls = 1
 
         # Act
         result = application_password_prompt_new(pwhash_filename)
 
         # Assert
-        assert m_getpass.call_count == expected_getpass_calls
+        assert m_pwinput.call_count == expected_pwinput_calls
         assert m_create_hash.call_count == expected_createhash_calls
         assert result == provided_passes[0]
 
-    def test_application_password_prompt_new_password_confirm_fail(self, m_getpass, m_create_hash):
+    def test_application_password_prompt_new_password_confirm_fail(self, m_pwinput, m_create_hash):
         # Setup
         pwhash_filename = 'hashfile'
         provided_passes = ['pass1', 'pass2']
-        m_getpass.side_effect = (p for p in provided_passes)
+        m_pwinput.side_effect = (p for p in provided_passes)
         exit_msg = "*Buzzer* Nope, no dice."
-        expected_getpass_calls = 2
+        expected_pwinput_calls = 2
         expected_createhash_calls = 0
 
         # Act
@@ -346,7 +346,7 @@ class TestAppPassNewPrompt:
             application_password_prompt_new(pwhash_filename)
 
         # Assert
-        assert m_getpass.call_count == expected_getpass_calls
+        assert m_pwinput.call_count == expected_pwinput_calls
         assert m_create_hash.call_count == expected_createhash_calls
         assert str(exit_with_msg.value) == exit_msg
 

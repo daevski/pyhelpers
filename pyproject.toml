@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyhelpers-daevski"
-version = "0.3.0"
+version = "0.3.2"
 description = "helper functions for personal use"
 authors = ["David Mckee <daevski@gmail.com>"]
 readme = "README.md"
