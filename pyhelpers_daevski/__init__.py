@@ -6,11 +6,9 @@ from typing import Any
 
 import yaml
 
-from pyhelpers_daevski.security import (
+from pyhelpers_daevski.LocalPassword import (
     application_password_prompt,
     application_password_prompt_new,
-    get_local_pw_hash,
-    key_from_password,
 )
 
 
@@ -51,12 +49,9 @@ def get_logger(
     return logging
 
 
-def authenticate_user(pw_hash_file: Path) -> bytes:
-    if pw_hash_file.exists():
-        pw_hash = get_local_pw_hash(pw_hash_file)
-    else:
-        pw_hash = application_password_prompt_new(pw_hash_file)
-
-    provided_password: str = application_password_prompt(pw_hash)
-    application_key: bytes = key_from_password(provided_password)
-    return application_key
+def authenticate_user(password_file: Path) -> bytes:
+    return (
+        application_password_prompt(password_file)
+        if password_file.exists()
+        else application_password_prompt_new(password_file)
+    )
